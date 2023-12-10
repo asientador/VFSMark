@@ -12,38 +12,50 @@ struct timespec start_time, end_time;
 int i;
 double total_time;
 char pathname_buffer [1024];
+enum modes actualMode;
 
 void computeTime(struct timespec * start_time, struct  timespec * end_time){
   double elapsed_time;
   elapsed_time=(double)(end_time->tv_sec - start_time->tv_sec) + ((end_time->tv_nsec - start_time->tv_nsec)/1e9);
 
-  printf("%d FILE SEQUENTIAL READ TOOK -> %f(ms)\n",i,elapsed_time);
+  printf("%d FILE READ TOOK -> %f(ms)\n",i,elapsed_time);
   total_time+= elapsed_time;
 }
 
-double readSeqFiles(int numFiles){
+double g_readFromFile(int numFiles, int mode){
   char buff [10];
-  
+
   total_time = 0;
+  
+  if(mode == r_sequential){
+    printf("\n\t\tSequential mode \n\n");
+  }
+  else if (mode == r_block){
+    printf("\n\t\tBlock read mode \n\n");
+  }else{
+    printf("The mode selected is not a valid option\n");
+    exit(EXIT_FAILURE);
+  }
 
   for(i=0;i<numFiles;i++){
     strcpy(pathname_buffer,"test");
     sprintf(buff,"%d",i);
     strcat(pathname_buffer,buff);
-    readSeqFile();
+    readFromFile(mode);
   }
   return total_time;
 }
 
-void readSeqFile(){
+void readFromFile(int mode){
   
   int fd;
   int error;
   char c;
   char buff;
+  char buff_block [2048];
   
-
-
+ 
+//  printf("Opening file %s\n",pathname_buffer);
   fd=open(pathname_buffer,O_RDONLY);
   if(fd<0){
     perror("Error opening file");
@@ -51,28 +63,46 @@ void readSeqFile(){
   }
   
   error = clock_gettime(CLOCK_REALTIME,&start_time);
-  printf("Start time\n");
+  //printf("Start time\n");
   if(error<0){
    perror("Error in clock_gettime");
    exit(EXIT_FAILURE);
   }
   error = 0;
 
-  do{
-       error = read(fd,&buff,sizeof(buff)); // & en buff
-    if(error<0){
-      perror("Error reading from file on seq");
-      exit(EXIT_FAILURE);
-    }else if(error==0){
-//      printf("EOF - %s\n",pathname); 
+  if(mode == r_sequential){
+    do{
+      error = read(fd,&buff,sizeof(buff)); // & en buff
+      if(error<0){
+        perror("Error reading from file on seq");
+       exit(EXIT_FAILURE);
+      }else if(error==0){
+//      printf("sequential read on %s done\n",pathname); 
       break;
-    }else{
-//      printf("%c",buff);
-    }
-  }while(buff!=EOF);
+      }else{
+//    printf("%c",buff);
+      }
+    }while(buff!=EOF);
+  }
+  else if (mode == r_block){
+    do{
+      error = read(fd,&buff_block,sizeof(buff_block)); // & en buff
+      if(error<0){
+        perror("Error reading from file on block mode");
+        exit(EXIT_FAILURE);
+      }else if(error==0){
+        printf("EOF - %s\n",pathname_buffer); 
+          break;
+      }else{
+//        printf("%c",buff);
+      }
+    }while(buff_block!=EOF);
+  }
+
+  
 
   error = clock_gettime(CLOCK_REALTIME,&end_time);
-  printf("End time\n");
+  //printf("End time\n");
   if(error<0){
     perror("Error in clock_gettime");
     exit(EXIT_FAILURE);

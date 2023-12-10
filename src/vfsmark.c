@@ -15,16 +15,19 @@ int main(int argc, char* argv[]){
 
   createFilesWithSize(atoi(argv[1]),atoi(argv[2]));
 
-  printf("select 1 for sequential read tests\n");
+  printf("\n******* Select 1 for READ ********\n");
 
   opt = getchar();
-
+  
   switch(opt){
   
     case '1':
-      printf("Sequential read test starting\n");
-      total_time = readSeqFiles(atoi(argv[1]));
-      printf("%f\n",total_time);
+      printf("\n***** READ TEST ******\n");
+      printf("****** Choose ********\n\t------------- 1> Sequential read \n\t------------- 2> Block read \n");
+      opt = getchar();
+      opt = getchar();
+      total_time = g_readFromFile(atoi(argv[1]),opt-'0');
+      printf("--------TOTAL TIME -> %f-----------\n",total_time);
       
   }
 
