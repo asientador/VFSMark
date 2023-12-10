@@ -36,6 +36,9 @@ void createFilesWithSize(int numberFiles, int size){
     strcat(pathnameBuff,buff);
     createFileWithSize(size);
   }
+
+  //free(direcc_map);
+  printf("%d files created with %d bytes each one\n",i,size);
 }
 
 void createFileWithSize(int size){
@@ -64,7 +67,7 @@ void createFileWithSize(int size){
     exit(EXIT_FAILURE);
   }
   
-  printf("%d bytes writen to file\n",bytes_writen);
+//  printf("%d bytes writen to file\n",bytes_writen);
 
   close(fd);
   close(fd_plain_text);  

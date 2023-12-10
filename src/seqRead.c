@@ -2,29 +2,49 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h>
+
 #include <time.h>
 
 #include "vfsmark.h"
 
-double computeTime(struct timespec * start_time, struct  timespec * end_time){
+struct timespec start_time, end_time;
+int i;
+double total_time;
+char pathname_buffer [1024];
+
+void computeTime(struct timespec * start_time, struct  timespec * end_time){
   double elapsed_time;
   elapsed_time=(double)(end_time->tv_sec - start_time->tv_sec) + ((end_time->tv_nsec - start_time->tv_nsec)/1e9);
 
-  printf("Elapsed_time -> %f\n",elapsed_time);
-  return elapsed_time;
+  printf("%d FILE SEQUENTIAL READ TOOK -> %f(ms)\n",i,elapsed_time);
+  total_time+= elapsed_time;
 }
 
-int main(){
+double readSeqFiles(int numFiles){
+  char buff [10];
+  
+  total_time = 0;
+
+  for(i=0;i<numFiles;i++){
+    strcpy(pathname_buffer,"test");
+    sprintf(buff,"%d",i);
+    strcat(pathname_buffer,buff);
+    readSeqFile();
+  }
+  return total_time;
+}
+
+void readSeqFile(){
   
   int fd;
   int error;
   char c;
   char buff;
-  double elapsed_time;
   
-  struct timespec start_time, end_time;
 
-  fd=open(pathname,O_RDONLY);
+
+  fd=open(pathname_buffer,O_RDONLY);
   if(fd<0){
     perror("Error opening file");
     exit(EXIT_FAILURE);
@@ -57,9 +77,7 @@ int main(){
     perror("Error in clock_gettime");
     exit(EXIT_FAILURE);
   }
-  
-  elapsed_time=computeTime(&start_time,&end_time);
+  close(fd);
+  computeTime(&start_time,&end_time);
 
-
-  return 0;
 }
