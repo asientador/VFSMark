@@ -15,8 +15,8 @@ int main(int argc, char* argv[]){
 
   createFilesWithSize(atoi(argv[1]),atoi(argv[2]));
 
-  printf("\n******* Select 1 for READ ********\n");
-
+  printf("\n******* Select 1 for READ  ********\n");
+  printf("\n******* Select 2 for WRITE ********\n");
   opt = getchar();
   
   switch(opt){
@@ -28,8 +28,12 @@ int main(int argc, char* argv[]){
       opt = getchar();
       total_time = g_readFromFile(atoi(argv[1]),opt-'0');
       printf("--------TOTAL TIME -> %f-----------\n",total_time);
-      
+  
+    case '2':
+      printf("\n***** WRITE TEST *******\n");
+      writeFiles(atoi(argv[1]),atoi(argv[2])); 
   }
+
 
   return 0;
 }
