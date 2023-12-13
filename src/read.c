@@ -34,10 +34,10 @@ double g_readFromFile(int numFiles, int mode){
     printf("\n\t\tSequential mode \n\n");
   }
   else if (mode == r_block){
-    printf("\n\t\tBlock read mode \n\n");
+    printf("**Block read mode**\n");
     printf("Give me the block size to read from, default 1024b \n");
     scanf("%d",&blockSizeParam);
-    printf("*** Test running with %d blockSize\n",blockSize);
+    printf("***Test running with %d blockSize***\n",blockSize);
   }else{
     printf("The mode selected is not a valid option\n");
     exit(EXIT_FAILURE);
